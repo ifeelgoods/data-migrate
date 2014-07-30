@@ -97,15 +97,9 @@ You can generate a data migration as you would a schema migration:
 
     rails g data_migration add_this_to_that
 
-By default, the migration also generates a schema migration by the same name.
-This allows you to do things like:
+By default, the migration will not generate a schema migration. If you need to generate with db migration, either run it as such, with the `with-schema-migration flag`:
 
-    rails g data_migration add_this_to_that this:string
-
-If you need a data only migration, either run it as such, with the skip-schema-migration flag:
-
-    rails g data_migration add_this_to_that --skip-schema-migration
-
+    rails g data_migration add_this_to_that --with-schema-migration
 
 ### Rake Tasks
 
