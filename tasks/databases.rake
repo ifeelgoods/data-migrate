@@ -1,7 +1,9 @@
 namespace :data do
   desc 'Migrate data migrations (options: VERSION=x, VERBOSE=false)'
   task :migrate => :environment do
-    DataMigrate::DataMigrator.migrate("db/data/", ENV["VERSION"] ? ENV["VERSION"].to_i : nil)
+    use_data do
+      DataMigrate::DataMigrator.migrate("db/data/", ENV["VERSION"] ? ENV["VERSION"].to_i : nil)
+    end
   end
 
   namespace :migrate do
@@ -18,78 +20,90 @@ namespace :data do
 
     desc 'Runs the "up" for a given migration VERSION.'
     task :up => :environment do
-      version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
-      raise "VERSION is required" unless version
-      DataMigrate::DataMigrator.run(:up, "db/data/", version)
+      use_data do
+        version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
+        raise "VERSION is required" unless version
+        DataMigrate::DataMigrator.run(:up, "db/data/", version)
+      end
     end
 
     desc 'Runs the "down" for a given migration VERSION.'
     task :down => :environment do
-      version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
-      raise "VERSION is required" unless version
-      DataMigrate::DataMigrator.run(:down, "db/data/", version)
+      use_data do
+        version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
+        raise "VERSION is required" unless version
+        DataMigrate::DataMigrator.run(:down, "db/data/", version)
+      end
     end
 
-    desc "Display status of data migrations"
-    task :status => :environment do
-      config = ActiveRecord::Base.configurations[Rails.env || 'development']
-      ActiveRecord::Base.establish_connection(config)
-      unless ActiveRecord::Base.connection.table_exists?(DataMigrate::DataMigrator.schema_migrations_table_name)
-        puts 'Data migrations table does not exist yet.'
-        next  # means "return" for rake task
-      end
-      db_list = ActiveRecord::Base.connection.select_values("SELECT version FROM #{DataMigrate::DataMigrator.schema_migrations_table_name}")
-      file_list = []
-      Dir.foreach(File.join(Rails.root, 'db', 'data')) do |file|
-        # only files matching "20091231235959_some_name.rb" pattern
-        if match_data = /(\d{14})_(.+)\.rb/.match(file)
-          status = db_list.delete(match_data[1]) ? 'up' : 'down'
-          file_list << [status, match_data[1], match_data[2]]
-        end
-      end
-      # output
-      puts "\ndatabase: #{config['database']}\n\n"
-      puts "#{"Status".center(8)}  #{"Migration ID".ljust(14)}  Migration Name"
-      puts "-" * 50
-      file_list.each do |file|
-        puts "#{file[0].center(8)}  #{file[1].ljust(14)}  #{file[2].humanize}"
-      end
-      db_list.each do |version|
-        puts "#{'up'.center(8)}  #{version.ljust(14)}  *** NO FILE ***"
-      end
-      puts
-    end
+    # desc "Display status of data migrations"
+    # task :status => :environment do
+    #   config = ActiveRecord::Base.configurations[Rails.env || 'development']
+    #   ActiveRecord::Base.establish_connection(config)
+    #   unless ActiveRecord::Base.connection.table_exists?(DataMigrate::DataMigrator.schema_migrations_table_name)
+    #     puts 'Data migrations table does not exist yet.'
+    #     next  # means "return" for rake task
+    #   end
+    #   db_list = ActiveRecord::Base.connection.select_values("SELECT version FROM #{DataMigrate::DataMigrator.schema_migrations_table_name}")
+    #   file_list = []
+    #   Dir.foreach(File.join(Rails.root, 'db', 'data')) do |file|
+    #     # only files matching "20091231235959_some_name.rb" pattern
+    #     if match_data = /(\d{14})_(.+)\.rb/.match(file)
+    #       status = db_list.delete(match_data[1]) ? 'up' : 'down'
+    #       file_list << [status, match_data[1], match_data[2]]
+    #     end
+    #   end
+    #   # output
+    #   puts "\ndatabase: #{config['database']}\n\n"
+    #   puts "#{"Status".center(8)}  #{"Migration ID".ljust(14)}  Migration Name"
+    #   puts "-" * 50
+    #   file_list.each do |file|
+    #     puts "#{file[0].center(8)}  #{file[1].ljust(14)}  #{file[2].humanize}"
+    #   end
+    #   db_list.each do |version|
+    #     puts "#{'up'.center(8)}  #{version.ljust(14)}  *** NO FILE ***"
+    #   end
+    #   puts
+    # end
   end
 
   desc 'Rolls the schema back to the previous version (specify steps w/ STEP=n).'
   task :rollback => :environment do
-    step = ENV['STEP'] ? ENV['STEP'].to_i : 1
-    DataMigrate::DataMigrator.rollback('db/data/', step)
+    use_data do
+      step = ENV['STEP'] ? ENV['STEP'].to_i : 1
+      DataMigrate::DataMigrator.rollback('db/data/', step)
+    end
   end
 
   desc 'Pushes the schema to the next version (specify steps w/ STEP=n).'
   task :forward => :environment do
-    step = ENV['STEP'] ? ENV['STEP'].to_i : 1
-    # TODO: No worky for .forward
-    # DataMigrate::DataMigrator.forward('db/data/', step)
-    migrations = pending_data_migrations.reverse.pop(step).reverse
-    migrations.each do | pending_migration |
-      DataMigrate::DataMigrator.run(:up, "db/data/", pending_migration[:version])
+    use_data do
+      step = ENV['STEP'] ? ENV['STEP'].to_i : 1
+      # TODO: No worky for .forward
+      # DataMigrate::DataMigrator.forward('db/data/', step)
+      migrations = DataMigrate::DataMigrator.pending_migrations.reverse.pop(step).reverse
+      migrations.each do |pending_migration|
+        DataMigrate::DataMigrator.run(:up, "db/data/", pending_migration[:version])
+      end
     end
   end
 
   desc "Retrieves the current schema version number for data migrations"
   task :version => :environment do
-    puts "Current data version: #{DataMigrate::DataMigrator.current_version}"
+    use_data do
+      puts "Current data version: #{DataMigrate::DataMigrator.current_version}"
+    end
   end
 end
 
-def pending_migrations
-  sort_migrations pending_data_migrations
-end
-
-def pending_data_migrations
-  sort_migrations DataMigrate::DataMigrator.new(:up, DataMigrate::DataMigrator.migrations('db/data')).pending_migrations.map{|m| { :version => m.version, :kind => :data }}
+def use_data
+  begin
+    data_migrate_original_schema_migrations_table_name = ActiveRecord::Base.schema_migrations_table_name
+    ActiveRecord::Base.schema_migrations_table_name = DataMigrate::DataMigrator.schema_migrations_table_name
+    yield
+  ensure
+    ActiveRecord::Base.schema_migrations_table_name = data_migrate_original_schema_migrations_table_name
+  end
 end
 
 def sort_migrations set_1, set_2=nil
