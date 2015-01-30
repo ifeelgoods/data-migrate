@@ -42,14 +42,6 @@ you get that QA gal, and she wants her own thing. Then the UI people
 get tired of waiting for the full stack to load on page refreshes, so
 you have to edit past migrations...
 
-With Data Migrate, you have the control.  You can generate your
-migrations as schema or data as you would as your work flow. For
-setting tasks that don't require any intermediate AR activity, like
-dev and test, you stick with db:migrate.  For your prod, and qa, you
-change their scripts to `db:migrate:with_data`.  Of course you want to
-test your migration, so you have the choice of `db:migrate:with_data` or
-`data:migrate` to just capture that data change.
-
 What's it do?
 -------------
 
@@ -97,9 +89,6 @@ You can generate a data migration as you would a schema migration:
 
     rails g data_migration add_this_to_that
 
-By default, the migration will not generate a schema migration. If you need to generate with db migration, either run it as such, with the `with-schema-migration flag`:
-
-    rails g data_migration add_this_to_that --with-schema-migration
 
 ### Rake Tasks
 
@@ -112,29 +101,15 @@ By default, the migration will not generate a schema migration. If you need to g
     rake data:migrate:up              # Runs the "up" for a given migration VERSION
     rake data:rollback                # Rolls the schema back to the previous version (specify steps w/ STEP=n)
     rake data:version                 # Retrieves the current schema version number for data migrations
-    rake db:forward:with_data         # Pushes the schema to the next version (specify steps w/ STEP=n)
-    rake db:migrate:down:with_data    # Runs the "down" for a given migration VERSION
-    rake db:migrate:redo:with_data    # Rollbacks the database one migration and re migrate up (options: STEP=x, VERSIO...
-    rake db:migrate:status:with_data  # Display status of data and schema migrations
-    rake db:migrate:up:with_data      # Runs the "up" for a given migration VERSION
-    rake db:migrate:with_data         # Migrate the database data and schema (options: VERSION=x, VERBOSE=false)
-    rake db:rollback:with_data        # Rolls the schema back to the previous version (specify steps w/ STEP=n)
-    rake db:version:with_data         # Retrieves the current schema version numbers for data and schema migrations
 
 Tasks work as they would with the 'vanilla' db version.  The 'with_data' addition to the 'db' tasks will run the task in the context of both the data and schema migrations.  That is, `rake db:rollback:with_data` will check to see if it was a schema or data migration invoked last, and do that.  Tasks invoked in that space also have an additional line of output, indicating if the action is performed on data or schema.
 
 With 'up' and 'down', you can specify the option 'BOTH', which defaults to false. Using true, will migrate both the data and schema (in the desired direction) if they both match the version provided.  Again, going up, schema is given precedence. Down its data.
 
-For more example, assume you have the 2 files:
-  db/migrate/20110419021211_add_x_to_y.rb
+For more example, assume you have the file:
   db/data/20110419021211_add_x_to_y.rb
 
-Running `rake db:migrate:up:with_data VERSION=20110419021211` would execute the 'db/migrate' version.
-Running `rake db:migrate:up:with_data VERSION=20110419021211` would execute the 'db/migrate' version, followed by the 'db/data' version.
-
-Going down instead of up would be the opposite.
-
-`rake db:migrate:status:with_data` provides and additional column to indicate which type of migration.
+Running `rake data:migrate  VERSION=20110419021211` would execute the 'db/data' version.
 
 Thanks
 ------
