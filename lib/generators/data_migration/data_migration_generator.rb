@@ -9,7 +9,7 @@ module DataMigrate
       include Rails::Generators::Migration
 
       argument :attributes, :type => :array, :default => [], :banner => "field:type field:type"
-      class_option :with_schema_migration, :desc => 'Dont generate database schema migration file.', :type => :boolean
+      class_option :with_schema_migration, :desc => 'Generate database schema migration file.', :type => :boolean
 
       def create_data_migration
         set_local_assigns!
