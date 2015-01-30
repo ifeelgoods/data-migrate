@@ -101,16 +101,6 @@ def sort_string migration
   "#{migration[:version]}_#{migration[:kind] == :data ? 1 : 0}"
 end
 
-def connect_to_database
-  config = ActiveRecord::Base.configurations[Rails.env || 'development']
-  ActiveRecord::Base.establish_connection(config)
-
-  unless ActiveRecord::Base.connection.table_exists?(DataMigrate::DataMigrator.schema_migrations_table_name)
-    puts 'Data migrations table does not exist yet.'
-    config = nil
-  end
-  config
-end
 
 def past_migrations sort=nil
   sort = sort.downcase if sort
@@ -118,17 +108,4 @@ def past_migrations sort=nil
   migrations = db_list_data.map{|d| {:version => d.to_i, :kind => :data }}
 
   sort == 'asc' ? sort_migrations(migrations) : sort_migrations(migrations).reverse
-end
-
-def assure_data_schema_table
-  config = ActiveRecord::Base.configurations[Rails.env || 'development'] || ENV["DATABASE_URL"]
-  ActiveRecord::Base.establish_connection(config)
-  sm_table = DataMigrate::DataMigrator.schema_migrations_table_name
-
-  unless ActiveRecord::Base.connection.table_exists?(sm_table)
-    ActiveRecord::Base.connection.create_table(sm_table, :id => false) do |schema_migrations_table|
-      schema_migrations_table.column :version, :string, :null => false
-    end
-    ActiveRecord::Base.connection.add_index sm_table, :version, :unique => true, :name => "#{ActiveRecord::Base.table_name_prefix}unique_data_migrations#{ActiveRecord::Base.table_name_suffix}"
-  end
 end
