@@ -1,14 +1,12 @@
 namespace :data do
   desc 'Migrate data migrations (options: VERSION=x, VERBOSE=false)'
   task :migrate => :environment do
-    assure_data_schema_table
     DataMigrate::DataMigrator.migrate("db/data/", ENV["VERSION"] ? ENV["VERSION"].to_i : nil)
   end
 
   namespace :migrate do
     desc  'Rollbacks the database one migration and re migrate up (options: STEP=x, VERSION=x).'
     task :redo => :environment do
-      assure_data_schema_table
       if ENV["VERSION"]
         Rake::Task["data:migrate:down"].invoke
         Rake::Task["data:migrate:up"].invoke
@@ -20,7 +18,6 @@ namespace :data do
 
     desc 'Runs the "up" for a given migration VERSION.'
     task :up => :environment do
-      assure_data_schema_table
       version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       raise "VERSION is required" unless version
       DataMigrate::DataMigrator.run(:up, "db/data/", version)
@@ -30,7 +27,6 @@ namespace :data do
     task :down => :environment do
       version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       raise "VERSION is required" unless version
-      assure_data_schema_table
       DataMigrate::DataMigrator.run(:down, "db/data/", version)
     end
 
@@ -67,14 +63,12 @@ namespace :data do
 
   desc 'Rolls the schema back to the previous version (specify steps w/ STEP=n).'
   task :rollback => :environment do
-    assure_data_schema_table
     step = ENV['STEP'] ? ENV['STEP'].to_i : 1
     DataMigrate::DataMigrator.rollback('db/data/', step)
   end
 
   desc 'Pushes the schema to the next version (specify steps w/ STEP=n).'
   task :forward => :environment do
-    assure_data_schema_table
     step = ENV['STEP'] ? ENV['STEP'].to_i : 1
     # TODO: No worky for .forward
     # DataMigrate::DataMigrator.forward('db/data/', step)
@@ -86,7 +80,6 @@ namespace :data do
 
   desc "Retrieves the current schema version number for data migrations"
   task :version => :environment do
-    assure_data_schema_table
     puts "Current data version: #{DataMigrate::DataMigrator.current_version}"
   end
 end

@@ -3,8 +3,14 @@ require 'active_record'
 module DataMigrate
   class DataMigrator < ActiveRecord::Migrator
     class << self
-      def schema_migrations_table_name
-        ActiveRecord::Base.table_name_prefix + 'data_migrations' + ActiveRecord::Base.table_name_suffix
+      def migrate(*arg)
+        begin
+          @_data_migrate_original_schema_migrations_table_name = ActiveRecord::Base.schema_migrations_table_name
+          ActiveRecord::Base.schema_migrations_table_name = 'data_migrations'
+          super
+        ensure
+          ActiveRecord::Base.schema_migrations_table_name = @_data_migrate_original_schema_migrations_table_name
+        end
       end
 
       def migrations_path
