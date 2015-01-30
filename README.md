@@ -1,4 +1,4 @@
-Data Migrate
+Data Migrator
 ====
 
 Run data migrations.
@@ -37,10 +37,10 @@ to run on data migrations only, or in conjunction with the schema
 migration.  For instance, `rake db:migrate:with_data` will run both
 schema and data migrations in the proper order.
 
-Rails 4 and Ruby 2.0
+Rails 4.1 and Ruby 2.0
 --------------------
 
-Data Migrate is Rails 4 and Ruby > 2.0 compatible.
+Data Migrator is Rails 4.1 and Ruby > 2.0 compatible.
 
 Installation
 ------------

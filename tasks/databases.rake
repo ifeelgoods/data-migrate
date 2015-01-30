@@ -1,8 +1,8 @@
 namespace :data do
 
   task :load_config do
-    ActiveRecord::Tasks::DatabaseTasks.migrations_paths = DataMigrate::MIGRATION_PATH
-    ActiveRecord::Base.schema_migrations_table_name = DataMigrate::SCHEMA_MIGRATIONS_TABLE_NAME
+    ActiveRecord::Tasks::DatabaseTasks.migrations_paths = DataMigrator::MIGRATION_PATH
+    ActiveRecord::Base.schema_migrations_table_name = DataMigrator::SCHEMA_MIGRATIONS_TABLE_NAME
   end
 
   desc 'Migrate data migrations (options: VERSION=x, VERBOSE=false)'

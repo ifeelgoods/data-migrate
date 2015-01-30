@@ -1,4 +1,4 @@
-module DataMigrate
+module DataMigrator
   class Railtie < Rails::Railtie
     generators = config.respond_to?(:app_generators) ? config.app_generators : config.generators
 
