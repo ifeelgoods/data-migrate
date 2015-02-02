@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rspec-rails", "~> 3.1.0"
   s.add_development_dependency "sqlite3"
+  s.add_development_dependency "generator_spec"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

@@ -1,9 +1,13 @@
-require 'test_helper'
+require 'spec_helper'
 
-class ControllersGeneratorTest < Rails::Generators::TestCase
-  tests DataMigrator::Generators::DataMigrationGenerator
+require "generator_spec"
+
+describe DataMigrator::Generators::DataMigrationGenerator, type: :generator do
   destination File.expand_path("../../tmp", __FILE__)
-  setup :prepare_destination
+
+  before(:all) do
+    prepare_destination
+  end
 
   test "Assert no controllers are created with no params" do
     run_generator %w{toto}
