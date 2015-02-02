@@ -1,5 +1,5 @@
-require 'rails/generators/named_base'
 require 'rails/generators'
+require 'rails/generators/named_base'
 require 'rails/generators/migration'
 
 module DataMigrator
