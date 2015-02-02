@@ -21,6 +21,8 @@ If you don't use the one off scripts, you could do it as a regular
 migration.  It'd be much better to keep concerns separate. The benefit
 of having them separate has to do with your data model.
 
+
+env_prefix will enable to process again when switching from staging to production.
 What's it do?
 -------------
 
