@@ -1,4 +1,5 @@
-require File.join(File.dirname(__FILE__), 'data_migrator', 'railtie')
+require_relative 'data_migrator/railtie'
+require_relative 'generators/data_migrator'
 
 module DataMigrator
   SCHEMA_MIGRATIONS_TABLE_NAME = 'data_migrations'
