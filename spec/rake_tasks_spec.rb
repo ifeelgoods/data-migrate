@@ -1,20 +1,19 @@
 require 'spec_helper'
-require 'support/rake'
 
 describe 'rake tasks' do
-  include_context "rake"
-
-  before do
-    subject.invoke(*task_args)
-  end
 
   def get_versions
     ActiveRecord::Base.connection.execute('SELECT * from data_migrations').to_a
   end
 
+  def exec_cmd(cmd)
+    `cd #{MIGRATOR_ROOT}/spec/dummy && RAILS_ENV=test #{cmd}`
+  end
+
   describe 'data:migrate' do
     it "add version to data_migration" do
-      assert_equal get_versions.any?, true
+      exec_cmd('rake data:migrate')
+      puts get_versions
     end
   end
 end
