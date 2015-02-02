@@ -6,11 +6,11 @@ Gem::Specification.new do |s|
   s.name        = "data_migrator"
   s.version     = DataMigrator::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Andrew J Vargo"]
-  s.email       = ["ajvargo@computer.org"]
-  s.homepage    = "http://ajvargo.com"
-  s.summary     = %q{Rake tasks to migrate.}
-  s.description = %q{Rake tasks to migrate.}
+  s.authors     = ["Matthieu Parey"]
+  s.email       = ["matthieu@ifeelgoods.com"]
+  s.homepage    = "https://github.com/ifeelgoods/data-migrator"
+  s.summary     = %q{Rake tasks to migrate data.}
+  s.description = %q{Rake tasks to migrate data.}
 
   s.add_dependency('rails', '~> 4.1.0')
 
