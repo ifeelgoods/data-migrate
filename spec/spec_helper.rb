@@ -13,6 +13,8 @@ require 'data_migrator'
 # in spec/support/ and its subdirectories.
 Dir[File.expand_path("../support/**/*.rb", __FILE__)].each {|f| require f}
 
+MIGRATOR_ROOT = File.expand_path('../..', __FILE__)
+
 RSpec.configure do |config|
 
   config.mock_with :rspec
