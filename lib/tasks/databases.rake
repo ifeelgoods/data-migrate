@@ -1,4 +1,12 @@
 namespace :db do
+  namespace :migrate do
+    desc 'Migrate schema and data migrations (options: VERSION=x, VERBOSE=false)'
+    task :all do
+      Rake::Task["db:migrate"].invoke
+      Rake::Task["db:data:migrate"].invoke
+    end
+  end
+
   namespace :data do
     task :load_config do
       ActiveRecord::Tasks::DatabaseTasks.migrations_paths = DataMigrator::MIGRATION_PATH
