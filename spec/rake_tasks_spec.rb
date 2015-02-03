@@ -53,7 +53,7 @@ describe 'rake tasks' do
   #### End Helpers ####
 
   describe 'db:data:migrate' do
-    before(:each) do
+    before do
       DatabaseCleaner.clean
     end
 
@@ -73,6 +73,8 @@ describe 'rake tasks' do
 
   describe 'db:migrate' do
     before do
+      ActiveRecord::Base.establish_connection
+      DatabaseCleaner.clean
       insert_migration_test
     end
     after do
@@ -91,6 +93,24 @@ describe 'rake tasks' do
     it "does add version to schema" do
       rake('db:migrate')
       expect(get_versions).to include('20150202174939')
+    end
+  end
+
+  describe 'db:migrate:all' do
+    before do
+      ActiveRecord::Base.establish_connection
+      DatabaseCleaner.clean
+      insert_migration_test
+    end
+    after do
+      reset_migration_and_db
+    end
+
+    it 'does add an user and change the schema' do
+      rake('db:migrate:all')
+      expect(User.count).to eq(2)
+      expect(get_versions).to include('20150202174939')
+      expect(get_data_versions).to include('20150202183455')
     end
   end
 end

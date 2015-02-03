@@ -3,6 +3,7 @@ namespace :db do
     desc 'Migrate schema and data migrations (options: VERSION=x, VERBOSE=false)'
     task :all do
       Rake::Task["db:migrate"].invoke
+      Rake::Task["db:migrate"].reenable
       Rake::Task["db:data:migrate"].invoke
     end
   end
