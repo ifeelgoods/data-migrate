@@ -9,6 +9,8 @@ namespace :db do
 
   namespace :data do
     task :load_config do
+      DataMigrator.activated = true
+      require_relative '../data_migrator/activerecord_ext'
       ActiveRecord::Tasks::DatabaseTasks.migrations_paths = DataMigrator::MIGRATION_PATH
       ActiveRecord::Base.schema_migrations_table_name = DataMigrator::SCHEMA_MIGRATIONS_TABLE_NAME
     end

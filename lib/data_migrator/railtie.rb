@@ -1,3 +1,6 @@
+require 'active_record'
+require 'active_record/migration'
+
 module DataMigrator
   class Railtie < Rails::Railtie
     rake_tasks do

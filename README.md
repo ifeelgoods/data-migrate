@@ -4,9 +4,7 @@ Data Migrator
 Run data migrations.
 
 Data migrations are stored in db/data. They act like schema
-migrations, except they should be reserved for data migrations. For
-instance, if you realize you need to titleize all your titles, this
-is the place to do it.
+migrations, except they should be reserved for data migrations.
 
 Why should I use this?
 ----------------------
@@ -23,6 +21,7 @@ of having them separate has to do with your data model.
 
 
 env_prefix will enable to process again when switching from staging to production.
+
 What's it do?
 -------------
 
