@@ -12,8 +12,7 @@ Gem::Specification.new do |s|
   s.summary     = %q{Rake tasks to migrate data.}
   s.description = %q{Rake tasks to migrate data.}
 
-  s.add_dependency('rails', '~> 4.1.0')
-
+  s.add_development_dependency "rails", "~> 4.1.0"
   s.add_development_dependency "rspec-rails", "~> 3.1.0"
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "generator_spec"
