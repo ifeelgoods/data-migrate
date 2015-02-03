@@ -41,18 +41,18 @@ describe 'rake tasks' do
     DatabaseCleaner.clean
   end
 
-  describe 'data:migrate' do
+  describe 'db:data:migrate' do
     it "add an user" do
-      expect{rake('data:migrate')}.to change{User.count}.by (2)
+      expect{rake('db:data:migrate')}.to change{User.count}.by (2)
     end
 
     it "add version to data_migration" do
-      rake('data:migrate')
+      rake('db:data:migrate')
       expect(get_data_versions.any?).to eq(true)
     end
 
     it "does not change schema migration" do
-      expect{rake('data:migrate')}.to_not change{get_versions}
+      expect{rake('db:data:migrate')}.to_not change{get_versions}
     end
   end
 

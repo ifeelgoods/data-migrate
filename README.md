@@ -72,14 +72,14 @@ You can generate a data migration as you would a schema migration:
 ### Rake Tasks
 
     $> rake -T data
-    rake data:forward                 # Pushes the schema to the next version (specify steps w/ STEP=n)
-    rake data:migrate                 # Migrate data migrations (options: VERSION=x, VERBOSE=false)
-    rake data:migrate:down            # Runs the "down" for a given migration VERSION
-    rake data:migrate:redo            # Rollbacks the database one migration and re migrate up (options: STEP=x, VERSIO...
-    rake data:migrate:status          # Display status of data migrations
-    rake data:migrate:up              # Runs the "up" for a given migration VERSION
-    rake data:rollback                # Rolls the schema back to the previous version (specify steps w/ STEP=n)
-    rake data:version                 # Retrieves the current schema version number for data migrations
+    rake db:data:forward                 # Pushes the schema to the next version (specify steps w/ STEP=n)
+    rake db:data:migrate                 # Migrate data migrations (options: VERSION=x, VERBOSE=false)
+    rake db:data:migrate:down            # Runs the "down" for a given migration VERSION
+    rake db:data:migrate:redo            # Rollbacks the database one migration and re migrate up (options: STEP=x, VERSIO...
+    rake db:data:migrate:status          # Display status of data migrations
+    rake db:data:migrate:up              # Runs the "up" for a given migration VERSION
+    rake db:data:rollback                # Rolls the schema back to the previous version (specify steps w/ STEP=n)
+    rake db:data:version                 # Retrieves the current schema version number for data migrations
 
 Tasks work as they would with the 'vanilla' db version. 
 
